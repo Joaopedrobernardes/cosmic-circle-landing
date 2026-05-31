@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmic Circle — Know Your Soulmate Before You Meet Them</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --purple:#7C3AED;--purple2:#6D28D9;--purple-light:#A78BFA;--purple-dim:rgba(124,58,237,0.12);
+  --gold:#C9973A;--gold-bg:rgba(201,151,58,0.12);--gold-border:rgba(201,151,58,0.28);
+  --bg:#07070F;--bg2:#0C0C1A;--bg3:#111128;
+  --text:#F0EEF9;--muted:rgba(240,238,249,0.48);--faint:rgba(240,238,249,0.22);
+  --border:rgba(167,139,250,0.13);--border2:rgba(167,139,250,0.22);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* ── CANVAS ── */
+#cvs{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5vw;background:rgba(7,7,15,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;letter-spacing:.04em}
+.logo span{color:var(--purple-light)}
+.nav-btn{background:var(--purple);color:#fff;padding:.5rem 1.4rem;border-radius:100px;font-size:.82rem;font-weight:500;letter-spacing:.02em;transition:background .2s,transform .15s;border:none;cursor:pointer}
+.nav-btn:hover{background:var(--purple2);transform:translateY(-1px)}
+
+/* ── SECTION WRAPPERS ── */
+section{position:relative;z-index:1}
+.container{max-width:860px;margin:0 auto;padding:0 5vw}
+.container-wide{max-width:1080px;margin:0 auto;padding:0 5vw}
+
+/* ── HERO ── */
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 5vw 5rem}
+.hero-eyebrow{font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--purple-light);margin-bottom:1.6rem;opacity:0;animation:up .7s .1s forwards}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,6rem);font-weight:300;line-height:1.06;margin-bottom:1.4rem;opacity:0;animation:up .8s .25s forwards}
+.hero h1 em{font-style:italic;color:var(--purple-light)}
+.hero-lead{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--muted);max-width:580px;margin:0 auto 2.6rem;opacity:0;animation:up .8s .4s forwards}
+.hero-cta-wrap{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:up .8s .55s forwards}
+.btn-main{display:inline-block;background:var(--purple);color:#fff;padding:.95rem 2.6rem;border-radius:100px;font-size:1rem;font-weight:500;letter-spacing:.02em;transition:all .25s;box-shadow:0 0 36px rgba(124,58,237,.35)}
+.btn-main:hover{background:var(--purple2);transform:translateY(-2px);box-shadow:0 0 52px rgba(124,58,237,.5)}
+.btn-ghost{display:inline-block;border:1px solid var(--border2);color:var(--muted);padding:.95rem 2.2rem;border-radius:100px;font-size:1rem;font-weight:400;transition:all .25s}
+.btn-ghost:hover{border-color:var(--purple-light);color:var(--text)}
+.hero-note{font-size:.75rem;color:var(--faint);margin-top:1.2rem;opacity:0;animation:up .8s .7s forwards}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+
+/* ── PROOF BAR ── */
+.proof-bar{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.1rem 5vw;display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap}
+.proof-item{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+.proof-item strong{color:var(--text);font-weight:500}
+.proof-sep{color:var(--border2);font-size:.7rem}
+
+/* ── PROBLEM ── */
+.problem{padding:7rem 0}
+.problem .container{max-width:680px}
+.overline{font-size:.65rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--purple-light);margin-bottom:.9rem}
+.section-h{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;line-height:1.2;margin-bottom:1.2rem}
+.section-h em{font-style:italic;color:var(--purple-light)}
+.section-body{font-size:.97rem;color:var(--muted);line-height:1.85}
+.section-body p+p{margin-top:1rem}
+.pullquote{border-left:2px solid var(--purple-light);padding:.8rem 1.4rem;margin:2rem 0;font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-style:italic;color:var(--text);line-height:1.4}
+
+/* ── WHAT IT IS ── */
+.what{padding:5rem 0;background:linear-gradient(180deg,transparent,rgba(124,58,237,.04),transparent)}
+.what-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem;margin-top:3rem}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:1.8rem;transition:border-color .25s,transform .25s;position:relative;overflow:hidden}
+.feature-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(167,139,250,.3),transparent)}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.feature-icon{font-size:1.6rem;margin-bottom:1rem}
+.feature-card h3{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:.5rem}
+.feature-card p{font-size:.85rem;color:var(--muted);line-height:1.75}
+.badge-new{display:inline-block;background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold);font-size:.6rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .6rem;border-radius:100px;margin-bottom:.6rem}
+
+/* ── STORY ── */
+.story{padding:7rem 0}
+.story .container{max-width:680px}
+.story-list{margin:2rem 0;display:flex;flex-direction:column;gap:1.2rem}
+.story-item{display:flex;gap:1rem;align-items:flex-start}
+.story-num{width:28px;height:28px;border-radius:50%;background:var(--purple-dim);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:500;color:var(--purple-light);flex-shrink:0;margin-top:.15rem}
+.story-item p{font-size:.93rem;color:var(--muted);line-height:1.8}
+.story-item p strong{color:var(--text);font-weight:500}
+
+/* ── TESTIMONIALS ── */
+.testimonials{padding:6rem 0;background:var(--bg2)}
+.testi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem;margin-top:3rem}
+.testi-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
+.stars{color:var(--gold);font-size:.88rem;letter-spacing:2px;margin-bottom:.9rem}
+.testi-text{font-size:.87rem;color:var(--muted);line-height:1.8;font-style:italic;margin-bottom:1rem}
+.testi-author{font-size:.78rem;font-weight:500;color:var(--text)}
+.testi-loc{font-size:.72rem;color:var(--faint)}
+
+/* ── OFFER ── */
+.offer{padding:7rem 0}
+.offer-box{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;padding:3rem;max-width:640px;margin:2.5rem auto 0;position:relative;overflow:hidden}
+.offer-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(167,139,250,.5),transparent)}
+.offer-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;margin-bottom:.5rem}
+.offer-headline em{font-style:italic;color:var(--purple-light)}
+.offer-price-row{display:flex;align-items:baseline;gap:.6rem;margin:1.5rem 0 .5rem}
+.offer-price{font-family:'Cormorant Garamond',serif;font-size:3.8rem;font-weight:300;line-height:1}
+.offer-price sup{font-size:1.4rem;vertical-align:top;margin-top:.6rem}
+.offer-was{font-size:.88rem;color:var(--faint);text-decoration:line-through}
+.offer-save{font-size:.75rem;background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold);padding:.2rem .7rem;border-radius:100px;font-weight:500}
+.offer-desc{font-size:.88rem;color:var(--muted);margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.includes-title{font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--purple-light);margin-bottom:1rem}
+.includes-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.include-item{display:flex;align-items:flex-start;gap:.7rem;font-size:.87rem;color:var(--muted)}
+.include-check{color:var(--purple-light);font-size:.75rem;margin-top:.22rem;flex-shrink:0}
+.cta-block{text-align:center}
+.btn-buy{display:block;width:100%;background:var(--purple);color:#fff;padding:1rem;border-radius:14px;font-size:1.05rem;font-weight:500;letter-spacing:.02em;border:none;cursor:pointer;transition:all .25s;box-shadow:0 0 32px rgba(124,58,237,.3)}
+.btn-buy:hover{background:var(--purple2);box-shadow:0 0 48px rgba(124,58,237,.5);transform:translateY(-1px)}
+.cta-fine{font-size:.72rem;color:var(--faint);margin-top:.8rem}
+.guarantee{display:flex;align-items:flex-start;gap:.8rem;margin-top:1.8rem;padding-top:1.8rem;border-top:1px solid var(--border)}
+.guarantee-icon{font-size:1.4rem;flex-shrink:0}
+.guarantee p{font-size:.82rem;color:var(--muted);line-height:1.7}
+.guarantee strong{color:var(--text);font-weight:500}
+
+/* ── FAQ ── */
+.faq{padding:6rem 0}
+.faq .container{max-width:640px}
+.faq-list{margin-top:2.5rem;border-top:1px solid var(--border)}
+.faq-item{border-bottom:1px solid var(--border);padding:1.3rem 0;cursor:pointer;user-select:none}
+.faq-q{display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.95rem;color:var(--text)}
+.faq-icon{color:var(--purple-light);font-size:1.1rem;transition:transform .3s;flex-shrink:0}
+.faq-a{font-size:.87rem;color:var(--muted);line-height:1.85;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s}
+.faq-item.open .faq-a{max-height:260px;padding-top:.8rem}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+
+/* ── FINAL CTA ── */
+.final-cta{padding:9rem 5vw;text-align:center;position:relative}
+.final-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(124,58,237,.1) 0%,transparent 65%);pointer-events:none}
+.final-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:300;line-height:1.15;margin-bottom:1.2rem;position:relative}
+.final-cta h2 em{font-style:italic;color:var(--purple-light)}
+.final-cta p{color:var(--muted);font-size:1rem;max-width:420px;margin:0 auto 2.5rem;position:relative}
+
+/* ── FOOTER ── */
+footer{padding:2.2rem 5vw;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--faint)}
+.footer-links{display:flex;gap:2rem}
+.footer-links a{font-size:.75rem;color:var(--faint);transition:color .2s}
+.footer-links a:hover{color:var(--muted)}
+.footer-copy{font-size:.7rem;color:rgba(240,238,249,.18);width:100%;text-align:center}
+
+/* ── DIVIDER ── */
+.star-div{text-align:center;color:var(--purple-light);opacity:.25;letter-spacing:.5em;font-size:.8rem;padding:.5rem 0}
+
+/* ── ANIMATIONS ── */
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:780px){
+  .what-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .offer-box{padding:2rem 1.4rem}
+  footer{flex-direction:column;align-items:flex-start}
+  .proof-sep{display:none}
+}
+@media(max-width:580px){
+  .what-grid{grid-template-columns:1fr}
+  .hero-cta-wrap{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<canvas id="cvs"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Soul<span>Mate</span></div>
+  <a href="#offer" class="nav-btn">Get Access — $59</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">✦ &nbsp; Cosmic Circle &nbsp; ✦</p>
+  <h1>You already know<br>who they are.<br><em>You just can't see them yet.</em></h1>
+  <p class="hero-lead">Soul Mate is the spiritual app that reveals the traits, timing, and cosmic signs of the person the universe has already written into your story. Stop guessing. Start knowing.</p>
+  <div class="hero-cta-wrap">
+    <a href="#offer" class="btn-main">Reveal My Soulmate →</a>
+    <a href="#what" class="btn-ghost">See What's Inside</a>
+  </div>
+  <p class="hero-note">One-time access · No subscription · Instant unlock</p>
+</section>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item">⭐⭐⭐⭐⭐ &nbsp;<strong>4.9 / 5</strong>&nbsp; average rating</div>
+  <span class="proof-sep">·</span>
+  <div class="proof-item"><strong>12,000+</strong>&nbsp; readings delivered</div>
+  <span class="proof-sep">·</span>
+  <div class="proof-item"><strong>94%</strong>&nbsp; of users report clarity within 7 days</div>
+  <span class="proof-sep">·</span>
+  <div class="proof-item">🔒 &nbsp;<strong>Secure checkout</strong>&nbsp; · Instant access</div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <p class="overline">The real problem</p>
+    <h2 class="section-h">You're not waiting for love.<br><em>You're waiting for certainty.</em></h2>
+    <div class="section-body">
+      <p>You've dated. You've hoped. You've had moments that felt close — and then didn't work out. And the hardest part isn't the heartbreak. It's the doubt. The constant question: <em>Is this really the person? Am I missing something? When does it actually happen?</em></p>
+      <p>Most people spend years answering those questions through trial and error. Wondering if they've already met their person. Replaying past relationships. Settling for almost-right when they deserve exactly-right.</p>
+    </div>
+    <div class="pullquote">"The universe doesn't make mistakes. It just makes timelines you haven't read yet."</div>
+    <div class="section-body">
+      <p>Soul Mate was built for exactly this. Not to predict the future with false certainty — but to give you the spiritual clarity to stop second-guessing and start recognizing what's already yours.</p>
+    </div>
+  </div>
+</section>
+
+<div class="star-div">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
+
+<!-- WHAT IS IT -->
+<section class="what" id="what">
+  <div class="container-wide">
+    <p class="overline" style="text-align:center">What's inside Cosmic Circle</p>
+    <h2 class="section-h" style="text-align:center;max-width:600px;margin:0 auto">Everything you need to find — and recognize — your person</h2>
+
+    <div class="what-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>Soulmate Traits</h3>
+        <p>A detailed profile of your soulmate's personality, energy, and physical traits — drawn from your birth chart and cosmic alignment. Unsettlingly accurate for most users.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌙</div>
+        <h3>Daily Horoscope</h3>
+        <p>Your personalized love forecast every morning. Know when cosmic energy is aligned for connection, what to watch for, and when to slow down.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <h3>Weekly Tarot Reading</h3>
+        <p>A fresh spread pulled specifically for your love journey each week. What's coming, what to release, and what the cards are urging you to pay attention to.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📖</div>
+        <h3>Monthly Love Reading</h3>
+        <p>Deep spiritual guidance on where your love story is heading this month. Ideal for navigating big decisions, uncertain feelings, and important conversations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⏳</div>
+        <h3>Past Life Reading</h3>
+        <p>Explore the karmic contracts and soul connections that link you to your soulmate across lifetimes. Understanding where you've been unlocks where you're going.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔮</div>
+        <div class="badge-new">Coming Soon</div>
+        <h3>Private Consultation</h3>
+        <p>One-on-one sessions with Tereza, your spiritual advisor. Ask what you've been afraid to ask out loud — about timing, a specific person, or what you're missing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="star-div">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
+
+<!-- STORY / HOW IT WORKS -->
+<section class="story">
+  <div class="container">
+    <p class="overline">How it works</p>
+    <h2 class="section-h">From confusion to <em>clarity</em> in four steps</h2>
+    <div class="story-list">
+      <div class="story-item">
+        <div class="story-num">1</div>
+        <p><strong>Get instant access.</strong> One payment unlocks everything inside Cosmic Circle — no subscriptions, no waiting, no complicated setup.</p>
+      </div>
+      <div class="story-item">
+        <div class="story-num">2</div>
+        <p><strong>Start with your Soulmate Traits.</strong> Enter your details and receive a detailed spiritual profile of your person — their energy, personality, and the signs that it's them.</p>
+      </div>
+      <div class="story-item">
+        <div class="story-num">3</div>
+        <p><strong>Follow your daily and weekly guidance.</strong> Every day, a new horoscope. Every week, a new tarot reading. The universe is always sending signals — Soul Mate helps you read them.</p>
+      </div>
+      <div class="story-item">
+        <div class="story-num">4</div>
+        <p><strong>Deepen with monthly and past life readings.</strong> When you're ready to go deeper — into patterns, karmic ties, and what this month is asking of you — the readings are there.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container-wide">
+    <p class="overline" style="text-align:center">Real stories</p>
+    <h2 class="section-h" style="text-align:center;max-width:580px;margin:0 auto">They stopped wondering.<br>They started <em>recognizing</em>.</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"I did the Soulmate Traits on a Tuesday night. By Thursday I matched with someone who fit every single detail. I went back and screenshotted everything. I'm not exaggerating."</p>
+        <div class="testi-author">Sarah M.</div>
+        <div class="testi-loc">Austin, TX</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"The weekly tarot described my exact situation and told me to stop waiting for a message. I stopped. He called two days later. I've been using this app every week since."</p>
+        <div class="testi-author">Jessica L.</div>
+        <div class="testi-loc">London, UK</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"I was genuinely skeptical. Then the Past Life Reading described a dynamic in my current relationship I'd never told anyone about. I cried. It made everything make sense."</p>
+        <div class="testi-author">Camila R.</div>
+        <div class="testi-loc">São Paulo, BR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="star-div">✦ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ✦</div>
+
+<!-- OFFER -->
+<section class="offer" id="offer">
+  <div class="container">
+    <p class="overline" style="text-align:center">The offer</p>
+    <h2 class="section-h" style="text-align:center;max-width:560px;margin:0 auto">One payment. Full access.<br><em>Everything the universe wants you to know.</em></h2>
+
+    <div class="offer-box">
+      <div class="offer-headline">Cosmic Circle — <em>Full Access</em></div>
+      <div class="offer-price-row">
+        <div class="offer-price"><sup>$</sup>59</div>
+        <div class="offer-was">$97</div>
+        <div class="offer-save">Save 39%</div>
+      </div>
+      <p class="offer-desc">One-time payment. Lifetime access to every tool inside the app. No hidden fees, no subscription, no fine print.</p>
+
+      <p class="includes-title">Everything included</p>
+      <div class="includes-list">
+        <div class="include-item"><span class="include-check">✦</span>Soulmate Traits — full personality & energy profile</div>
+        <div class="include-item"><span class="include-check">✦</span>Daily Horoscope — personalized love forecast every day</div>
+        <div class="include-item"><span class="include-check">✦</span>Weekly Tarot Reading — new spread every week</div>
+        <div class="include-item"><span class="include-check">✦</span>Monthly Love Reading — deep spiritual guidance</div>
+        <div class="include-item"><span class="include-check">✦</span>Past Life Reading — karmic connections & soul contracts</div>
+        <div class="include-item"><span class="include-check">✦</span>Private Consultation with Tereza — coming soon, included free</div>
+      </div>
+
+      <div class="cta-block">
+        <a href="YOUR_PERFECTPAY_CHECKOUT_URL_HERE" class="btn-buy">Yes, I Want Cosmic Circle — $59 →</a>
+        <p class="cta-fine">🔒 Secure checkout · Instant access after payment · Available on any device</p>
+      </div>
+
+      <div class="guarantee">
+        <div class="guarantee-icon">🛡️</div>
+        <p><strong>7-day satisfaction guarantee.</strong> If you're not satisfied within 7 days of purchase, reach out and we'll make it right. No complicated process, no judgment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <p class="overline" style="text-align:center">Questions</p>
+    <h2 class="section-h" style="text-align:center;margin-bottom:0">Frequently asked</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">What exactly is Cosmic Circle? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Cosmic Circle is a spiritual app that combines astrology, tarot, and energy reading to help you understand your soulmate journey. It includes daily, weekly, and monthly readings — plus a full Soulmate Traits profile and Past Life Reading.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this a subscription? <span class="faq-icon">+</span></div>
+        <div class="faq-a">No. Cosmic Circle is a one-time payment of $59. You get lifetime access to everything inside the app — no recurring charges, no surprises on your statement.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How do I access the app after purchase? <span class="faq-icon">+</span></div>
+        <div class="faq-a">After completing your purchase, you'll receive login instructions by email. Simply log in to the Soul Mate app and your Cosmic Circle access will already be active — on any browser or device.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is the Private Consultation included? <span class="faq-icon">+</span></div>
+        <div class="faq-a">The Private Consultation with Tereza is currently in its final phase before launch. When it goes live, all Cosmic Circle members will receive access automatically — no extra charge.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">I'm in a relationship. Is this still for me? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Absolutely. Many users use Cosmic Circle to gain deeper clarity on their current relationship — understanding karmic connections, compatibility, and whether the person they're with is truly their soulmate. The readings work for all stages of love.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is my information private? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Completely. Your readings, personal details, and consultations are never shared with anyone. Everything stays between you and the app.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if I'm not satisfied? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Reach out within 7 days of purchase and we'll make it right. No complicated forms, no runaround.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <h2>Your soulmate isn't<br>waiting. <em>You are.</em></h2>
+  <p>The universe already wrote your love story. Let's read it together.</p>
+  <a href="#offer" class="btn-main" style="font-size:1.05rem;padding:1.05rem 3rem">Get Cosmic Circle — $59 →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Soul Mate ✦</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Support</a>
+  </div>
+  <p class="footer-copy">© 2026 Soul Mate. All rights reserved. For entertainment and spiritual guidance purposes only.</p>
+</footer>
+
+<script>
+const c=document.getElementById('cvs'),x=c.getContext('2d');
+let s=[];
+function rsz(){c.width=innerWidth;c.height=innerHeight}
+function init(){s=[];for(let i=0;i<160;i++)s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.1+.2,a:Math.random()*.5+.1,p:Math.random()*Math.PI*2,sp:Math.random()*.25+.04})}
+function draw(t){x.clearRect(0,0,c.width,c.height);s.forEach(st=>{st.p+=st.sp*.018;const a=st.a*(.7+.3*Math.sin(st.p+t*.0008));x.beginPath();x.arc(st.x,st.y,st.r,0,Math.PI*2);x.fillStyle=`rgba(190,175,255,${a})`;x.fill()});requestAnimationFrame(draw)}
+rsz();init();requestAnimationFrame(draw);
+window.addEventListener('resize',()=>{rsz();init()});
+
+document.querySelectorAll('.faq-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const open=el.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(e=>e.classList.remove('open'));
+    if(!open)el.classList.add('open');
+  });
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
+  });
+});
+</script>
+</body>
+</html>
